@@ -27,6 +27,41 @@ const EmergencyForm = () => {
   });
 
   const [loadingCep, setLoadingCep] = useState(false);
+  const [hasDraft, setHasDraft] = useState(false);
+
+  // Carregar dados salvos do LocalStorage ao montar o componente
+  useEffect(() => {
+    const savedData = localStorage.getItem('emergencyForm1');
+    if (savedData) {
+      try {
+        const parsed = JSON.parse(savedData);
+        setFormData(parsed.formData || formData);
+        setAddressData(parsed.addressData || addressData);
+        setHasDraft(true);
+      } catch (error) {
+        console.error('Erro ao carregar dados salvos:', error);
+      }
+    }
+  }, []);
+
+  // Salvar dados no LocalStorage sempre que formData ou addressData mudar
+  // MAS SOMENTE se houver algum dado preenchido (não salvar quando tudo está vazio)
+  useEffect(() => {
+    const hasData = 
+      formData.isAnonymous !== null ||
+      formData.whatIsHappening.trim() !== '' ||
+      formData.cep.trim() !== '' ||
+      formData.houseNumber.trim() !== '';
+    
+    if (hasData) {
+      const dataToSave = {
+        formData,
+        addressData,
+        timestamp: new Date().toISOString()
+      };
+      localStorage.setItem('emergencyForm1', JSON.stringify(dataToSave));
+    }
+  }, [formData, addressData]);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -104,12 +139,40 @@ const EmergencyForm = () => {
       return;
     }
     
+    // Salvar dados completos do formulário 1 antes de navegar
+    const completeData = {
+      formData,
+      addressData,
+      fullAddress: fullAddress(),
+      timestamp: new Date().toISOString()
+    };
+    localStorage.setItem('emergencyForm1Complete', JSON.stringify(completeData));
+    
     // Navega para página 2 PASSANDO o valor de "O que está acontecendo?"
     navigate('/emergency2', { 
       state: { 
         whatIsHappening: formData.whatIsHappening 
       } 
     });
+  };
+
+  const handleClearDraft = () => {
+    if (confirm('Deseja limpar o rascunho salvo?')) {
+      localStorage.removeItem('emergencyForm1');
+      setFormData({
+        isAnonymous: null,
+        whatIsHappening: '',
+        cep: '',
+        houseNumber: '',
+      });
+      setAddressData({
+        street: '',
+        neighborhood: '',
+        city: '',
+        state: '',
+      });
+      setHasDraft(false);
+    }
   };
 
   const handleBack = () => {

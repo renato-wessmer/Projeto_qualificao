@@ -6,19 +6,58 @@
  * @copyright (c) 2025 Renato Wessner dos Santos
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Webcam from 'react-webcam';
 
 const Otherinformation = () => {
   const navigate = useNavigate();
   const [otherInfo, setOtherInfo] = useState('');
+  const [hasDraft, setHasDraft] = useState(false);
+
+  // Carregar dados salvos do LocalStorage ao montar o componente
+  useEffect(() => {
+    const savedData = localStorage.getItem('otherinformation');
+    if (savedData) {
+      try {
+        const parsed = JSON.parse(savedData);
+        setOtherInfo(parsed.otherInfo || '');
+        setHasDraft(true);
+      } catch (error) {
+        console.error('Erro ao carregar dados salvos:', error);
+      }
+    }
+  }, []);
+
+  // Salvar dados no LocalStorage sempre que otherInfo mudar
+  // MAS SOMENTE se houver algum dado preenchido (não salvar quando está vazio)
+  useEffect(() => {
+    if (otherInfo.trim() !== '') {
+      const dataToSave = {
+        otherInfo,
+        timestamp: new Date().toISOString()
+      };
+      localStorage.setItem('otherinformation', JSON.stringify(dataToSave));
+    }
+  }, [otherInfo]);
 
   const handleBack = () => {
     navigate('/emergency2');
   };
 
   const handleSubmit = () => {
+    // Salvar informações adicionais completas
+    const completeData = {
+      otherInfo,
+      timestamp: new Date().toISOString()
+    };
+    localStorage.setItem('otherinformationComplete', JSON.stringify(completeData));
+    
+    // Limpar todos os rascunhos, mantendo apenas os dados completos
+    localStorage.removeItem('emergencyForm1');
+    localStorage.removeItem('emergencyForm2');
+    localStorage.removeItem('otherinformation');
+    
     // Navega para página de sucesso
     navigate('/end');
   };

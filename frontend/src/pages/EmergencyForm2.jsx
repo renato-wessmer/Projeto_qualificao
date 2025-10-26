@@ -6,7 +6,7 @@
  * @copyright (c) 2025 Renato Wessner dos Santos
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Webcam from 'react-webcam';
 
@@ -32,6 +32,38 @@ const EmergencyForm2 = () => {
     isArmed: null,
     armedDescription: '', // novo campo
   });
+  const [hasDraft, setHasDraft] = useState(false);
+
+  // Carregar dados salvos do LocalStorage ao montar o componente
+  useEffect(() => {
+    const savedData = localStorage.getItem('emergencyForm2');
+    if (savedData) {
+      try {
+        const parsed = JSON.parse(savedData);
+        setFormData(parsed.formData || formData);
+        setHasDraft(true);
+      } catch (error) {
+        console.error('Erro ao carregar dados salvos:', error);
+      }
+    }
+  }, []);
+
+  // Salvar dados no LocalStorage sempre que formData mudar
+  // MAS SOMENTE se houver algum dado preenchido (não salvar quando tudo está vazio)
+  useEffect(() => {
+    const hasData = 
+      formData.whatIsBeingStolen.trim() !== '' ||
+      formData.isArmed !== null ||
+      formData.armedDescription.trim() !== '';
+    
+    if (hasData) {
+      const dataToSave = {
+        formData,
+        timestamp: new Date().toISOString()
+      };
+      localStorage.setItem('emergencyForm2', JSON.stringify(dataToSave));
+    }
+  }, [formData]);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -56,6 +88,14 @@ const EmergencyForm2 = () => {
       alert('Por favor, descreva a pessoa armada');
       return;
     }
+    
+    // Salvar dados completos do formulário 2 antes de navegar
+    const completeData = {
+      formData,
+      whatIsHappening,
+      timestamp: new Date().toISOString()
+    };
+    localStorage.setItem('emergencyForm2Complete', JSON.stringify(completeData));
     
     // Navega para página Otherinformation
     navigate('/otherinformation');

@@ -15,6 +15,14 @@ const End = () => {
   const registrationNumber = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
 
   const handleBackToHome = () => {
+    // Limpar todos os dados salvos ao voltar para home
+    localStorage.removeItem('emergencyForm1');
+    localStorage.removeItem('emergencyForm2');
+    localStorage.removeItem('otherinformation');
+    localStorage.removeItem('emergencyForm1Complete');
+    localStorage.removeItem('emergencyForm2Complete');
+    localStorage.removeItem('otherinformationComplete');
+    
     navigate('/home');
   };
 
@@ -42,6 +50,17 @@ const End = () => {
             <span className="font-medium">Número de registro: </span>
             <span className="font-bold text-blue-600">{registrationNumber}</span>
           </div>
+
+          {/* Espaçamento */}
+          <div className="h-16"></div>
+
+          {/* Botão Nova Solicitação */}
+          <button
+            onClick={handleBackToHome}
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white text-lg font-medium py-4 px-8 rounded-full transition-colors duration-200"
+          >
+            NOVA SOLICITAÇÃO
+          </button>
 
         </div>
       </div>
