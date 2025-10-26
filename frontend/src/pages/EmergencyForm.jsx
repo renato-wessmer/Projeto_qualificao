@@ -1,13 +1,14 @@
 /**
  * @file EmergencyForm.jsx
  * @author Renato Wessner dos Santos
- * @date 2025-10-26
+ * @date 2025-10-24
  * @project SOS Libras - Sistema de Emergência em Libras
  * @copyright (c) 2025 Renato Wessner dos Santos
  */
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Webcam from 'react-webcam';
 
 const EmergencyForm = () => {
   const navigate = useNavigate();
@@ -116,14 +117,20 @@ const EmergencyForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex">
-      {/* Área da Webcam - Esquerda */}
-      <div className="hidden md:flex md:w-1/2 bg-gray-100 items-center justify-center p-8">
-        <div className="w-full h-full max-w-2xl max-h-96 bg-gray-300 rounded-lg flex items-center justify-center">
-          <p className="text-gray-600 text-center">
-            Área da Webcam<br />
-            (Captura de gestos em Libras)
-          </p>
+    <div className="min-h-screen bg-white flex flex-col md:flex-row">
+      {/* Área da Webcam - Topo (mobile) / Esquerda (desktop) */}
+      <div className="w-full md:w-1/2 bg-gray-100 flex items-center justify-center p-[10px]">
+        <div className="w-full h-64 md:h-full rounded-lg overflow-hidden">
+          <Webcam
+            audio={false}
+            screenshotFormat="image/jpeg"
+            videoConstraints={{
+              width: 1280,
+              height: 720,
+              facingMode: "user"
+            }}
+            className="w-full h-full object-cover rounded-lg"
+          />
         </div>
       </div>
 
