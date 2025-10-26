@@ -12,6 +12,7 @@ import Splash from './pages/Splash';
 import HomePage from './pages/HomePage';
 import InfoScreen from './pages/InfoScreen';
 import DistritosScreen from './pages/DistritosScreen';
+import EmergencyForm from './pages/EmergencyForm';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/home" element={<HomePage />} />
         <Route path="/info" element={<InfoScreen />} />
         <Route path="/distritos" element={<DistritosScreen />} />
+        <Route path="/emergency" element={<EmergencyForm />} />
       </Routes>
     </Router>
   );

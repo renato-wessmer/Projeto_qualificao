@@ -11,9 +11,9 @@ import { useNavigate } from 'react-router-dom';
 const HomePage = () => {
   const navigate = useNavigate();
 
-  const handleEmergencyNow = () => {
-    alert('Indo para formulário de emergência');
-  };
+const handleEmergencyNow = () => {
+  navigate('/emergency');
+};
 
   const handleNotNow = () => {
     navigate('/info');
