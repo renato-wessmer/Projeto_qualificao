@@ -6,7 +6,7 @@
  * @copyright (c) 2025 Renato Wessner dos Santos
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const EmergencyForm = () => {
@@ -15,26 +15,97 @@ const EmergencyForm = () => {
     isAnonymous: null,
     whatIsHappening: '',
     cep: '',
-    phoneNumber: '',
+    houseNumber: '',
   });
+  
+  const [addressData, setAddressData] = useState({
+    street: '',
+    neighborhood: '',
+    city: '',
+    state: '',
+  });
+
+  const [loadingCep, setLoadingCep] = useState(false);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  // Buscar CEP automaticamente quando tiver 8 dígitos
+  useEffect(() => {
+    const cepNumeros = formData.cep.replace(/\D/g, '');
+    
+    if (cepNumeros.length === 8) {
+      setLoadingCep(true);
+      fetch(`https://viacep.com.br/ws/${cepNumeros}/json/`)
+        .then(res => res.json())
+        .then(data => {
+          if (!data.erro) {
+            setAddressData({
+              street: data.logradouro || '',
+              neighborhood: data.bairro || '',
+              city: data.localidade || '',
+              state: data.uf || '',
+            });
+          } else {
+            alert('CEP não encontrado');
+            setAddressData({ street: '', neighborhood: '', city: '', state: '' });
+          }
+        })
+        .catch(err => {
+          console.error('Erro ao buscar CEP:', err);
+          alert('Erro ao buscar CEP');
+        })
+        .finally(() => setLoadingCep(false));
+    } else {
+      setAddressData({ street: '', neighborhood: '', city: '', state: '' });
+    }
+  }, [formData.cep]);
+
+  // Montar endereço completo: Rua, Número - Bairro - Cidade/UF
+  const fullAddress = () => {
+    if (!addressData.street) return '';
+    
+    const parts = [];
+    
+    // Rua + Número
+    if (formData.houseNumber) {
+      parts.push(`${addressData.street}, ${formData.houseNumber}`);
+    } else {
+      parts.push(addressData.street);
+    }
+    
+    // Bairro
+    if (addressData.neighborhood) parts.push(addressData.neighborhood);
+    
+    // Cidade/Estado
+    if (addressData.city) parts.push(`${addressData.city}/${addressData.state}`);
+    
+    return parts.join(' - ');
+  };
+
   const handleSubmit = () => {
-    // Validação básica
+    // Validação
     if (formData.isAnonymous === null) {
       alert('Por favor, informe se a solicitação é anônima');
       return;
     }
     if (!formData.whatIsHappening.trim()) {
-      alert('Por favor, descreva o que está acontecendo');
+      alert('Por favor, informe o que está acontecendo');
+      return;
+    }
+    if (!formData.cep || formData.cep.replace(/\D/g, '').length !== 8) {
+      alert('Por favor, informe um CEP válido');
+      return;
+    }
+    if (!formData.houseNumber.trim()) {
+      alert('Por favor, informe o número da residência');
       return;
     }
     
-    // Por enquanto só alert, depois vai enviar para backend
-    alert('Formulário enviado! Próxima tela...');
+    // Navegar para próxima tela (você me dirá qual é)
+    alert('Formulário validado! Indo para próxima tela...');
+    // navigate('/proxima-tela');
   };
 
   const handleBack = () => {
@@ -91,12 +162,11 @@ const EmergencyForm = () => {
             <label className="block bg-blue-500 text-white text-center py-3 px-4 rounded-full mb-3">
               O que está acontecendo?
             </label>
-            <textarea
+            <input
+              type="text"
               value={formData.whatIsHappening}
               onChange={(e) => handleInputChange('whatIsHappening', e.target.value)}
-              className="w-full p-4 border-2 border-gray-300 rounded-3xl focus:border-blue-500 focus:outline-none resize-none"
-              rows="3"
-              placeholder="Descreva o que está acontecendo..."
+              className="w-full p-4 border-2 border-gray-300 rounded-full focus:border-blue-500 focus:outline-none"
             />
           </div>
 
@@ -110,9 +180,11 @@ const EmergencyForm = () => {
               value={formData.cep}
               onChange={(e) => handleInputChange('cep', e.target.value)}
               className="w-full p-4 border-2 border-gray-300 rounded-full focus:border-blue-500 focus:outline-none"
-              placeholder="00000-000"
               maxLength="9"
             />
+            {loadingCep && (
+              <p className="text-sm text-gray-500 mt-2 text-center">Buscando CEP...</p>
+            )}
           </div>
 
           {/* Gesticule número */}
@@ -121,18 +193,38 @@ const EmergencyForm = () => {
               Gesticule número
             </label>
             <input
-              type="tel"
-              value={formData.phoneNumber}
-              onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
+              type="text"
+              value={formData.houseNumber}
+              onChange={(e) => handleInputChange('houseNumber', e.target.value)}
               className="w-full p-4 border-2 border-gray-300 rounded-full focus:border-blue-500 focus:outline-none"
-              placeholder="(00) 00000-0000"
             />
           </div>
+
+          {/* Endereço completo */}
+          {fullAddress() && (
+            <div>
+              <label className="block bg-blue-500 text-white text-center py-3 px-4 rounded-full mb-3">
+                Endereço completo
+              </label>
+              <div className="w-full p-4 bg-gray-100 border-2 border-gray-300 rounded-3xl text-gray-700">
+                {fullAddress()}
+              </div>
+            </div>
+          )}
+
+          {/* Botão AVANÇAR */}
+          <button
+            onClick={handleSubmit}
+            className="w-full bg-green-500 hover:bg-green-600 text-white text-lg font-medium py-4 px-8 rounded-full transition-colors duration-200 flex items-center justify-center gap-2"
+          >
+            <span>AVANÇAR</span>
+            <span>→</span>
+          </button>
 
           {/* Botão VOLTAR */}
           <button
             onClick={handleBack}
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white text-lg font-medium py-4 px-8 rounded-full transition-colors duration-200 flex items-center justify-center gap-2 mt-8"
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white text-lg font-medium py-4 px-8 rounded-full transition-colors duration-200 flex items-center justify-center gap-2"
           >
             <span>←</span>
             <span>VOLTAR</span>
