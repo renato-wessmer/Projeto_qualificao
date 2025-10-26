@@ -13,6 +13,7 @@ import HomePage from './pages/HomePage';
 import InfoScreen from './pages/InfoScreen';
 import DistritosScreen from './pages/DistritosScreen';
 import EmergencyForm from './pages/EmergencyForm';
+import EmergencyForm2 from './pages/EmergencyForm2';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/info" element={<InfoScreen />} />
         <Route path="/distritos" element={<DistritosScreen />} />
         <Route path="/emergency" element={<EmergencyForm />} />
+        <Route path="/emergency2" element={<EmergencyForm2 />} />
       </Routes>
     </Router>
   );

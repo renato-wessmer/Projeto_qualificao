@@ -1,5 +1,5 @@
 /**
- * @file EmergencyForm.jsx
+ * @file EmergencyForm2.jsx
  * @author Renato Wessner dos Santos
  * @date 2025-10-24
  * @project SOS Libras - Sistema de Emergência em Libras
@@ -9,7 +9,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const EmergencyForm = () => {
+const EmergencyForm2 = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     isAnonymous: null,
@@ -103,7 +103,9 @@ const EmergencyForm = () => {
       return;
     }
     
-    navigate('/emergency2');
+    // Navegar para próxima tela (você me dirá qual é)
+    alert('Formulário validado! Indo para próxima tela...');
+    // navigate('/proxima-tela');
   };
 
   const handleBack = () => {
@@ -233,4 +235,4 @@ const EmergencyForm = () => {
   );
 };
 
-export default EmergencyForm;
+export default EmergencyForm2;
