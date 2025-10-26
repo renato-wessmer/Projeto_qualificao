@@ -16,7 +16,7 @@ const HomePage = () => {
   };
 
   const handleNotNow = () => {
-    alert('Procure uma delegacia ou ligue 190');
+    navigate('/info');
   };
 
   const handleBack = () => {

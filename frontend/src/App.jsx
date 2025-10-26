@@ -10,6 +10,8 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Splash from './pages/Splash';
 import HomePage from './pages/HomePage';
+import InfoScreen from './pages/InfoScreen';
+import DistritosScreen from './pages/DistritosScreen';
 
 function App() {
   return (
@@ -17,6 +19,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Splash />} />
         <Route path="/home" element={<HomePage />} />
+        <Route path="/info" element={<InfoScreen />} />
+        <Route path="/distritos" element={<DistritosScreen />} />
       </Routes>
     </Router>
   );
