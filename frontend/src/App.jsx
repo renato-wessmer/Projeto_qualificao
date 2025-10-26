@@ -14,6 +14,7 @@ import DistritosScreen from './pages/DistritosScreen';
 import EmergencyForm from './pages/EmergencyForm';
 import EmergencyForm2 from './pages/EmergencyForm2';
 import Otherinformation from './pages/Otherinformation';
+import End from './pages/End';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/emergency" element={<EmergencyForm />} />
         <Route path="/emergency2" element={<EmergencyForm2 />} />
         <Route path="/otherinformation" element={<Otherinformation />} />
+        <Route path="/end" element={<End />} />
       </Routes>
     </Router>
   );

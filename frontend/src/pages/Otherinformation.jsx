@@ -17,6 +17,11 @@ const Otherinformation = () => {
     navigate('/emergency2');
   };
 
+  const handleSubmit = () => {
+    // Navega para página de sucesso
+    navigate('/end');
+  };
+
   return (
     <div className="min-h-screen bg-white flex">
       {/* Área da Webcam - Esquerda */}
@@ -53,7 +58,7 @@ const Otherinformation = () => {
 
           {/* Botão AVANÇAR */}
           <button
-            onClick={() => alert('Próxima página ainda não criada')}
+            onClick={handleSubmit}
             className="w-full bg-green-500 hover:bg-green-600 text-white text-lg font-medium py-4 px-8 rounded-full transition-colors duration-200 flex items-center justify-center gap-2"
           >
             <span>AVANÇAR</span>
