@@ -1,115 +1,67 @@
 /**
  * @file EmergencyForm2.jsx
  * @author Renato Wessner dos Santos
- * @date 2025-10-24
+ * @date 2025-10-26
  * @project SOS Libras - Sistema de Emergência em Libras
  * @copyright (c) 2025 Renato Wessner dos Santos
  */
 
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const EmergencyForm2 = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    isAnonymous: null,
-    whatIsHappening: '',
-    cep: '',
-    houseNumber: '',
-  });
+  const location = useLocation();
   
-  const [addressData, setAddressData] = useState({
-    street: '',
-    neighborhood: '',
-    city: '',
-    state: '',
+  // Recebe o valor de "O que está acontecendo?" da página anterior
+  const whatIsHappening = location.state?.whatIsHappening?.toLowerCase() || '';
+  
+  // Define o label baseado no que foi informado na página 1
+  const getLabel = () => {
+    if (whatIsHappening.includes('furto')) {
+      return 'O que está sendo furtado?';
+    } else if (whatIsHappening.includes('roubo')) {
+      return 'O que está sendo roubado?';
+    }
+    return 'O que está sendo furtado?'; // padrão
+  };
+  
+  const [formData, setFormData] = useState({
+    whatIsBeingStolen: '',
+    isArmed: null,
+    armedDescription: '', // novo campo
   });
-
-  const [loadingCep, setLoadingCep] = useState(false);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  // Buscar CEP automaticamente quando tiver 8 dígitos
-  useEffect(() => {
-    const cepNumeros = formData.cep.replace(/\D/g, '');
     
-    if (cepNumeros.length === 8) {
-      setLoadingCep(true);
-      fetch(`https://viacep.com.br/ws/${cepNumeros}/json/`)
-        .then(res => res.json())
-        .then(data => {
-          if (!data.erro) {
-            setAddressData({
-              street: data.logradouro || '',
-              neighborhood: data.bairro || '',
-              city: data.localidade || '',
-              state: data.uf || '',
-            });
-          } else {
-            alert('CEP não encontrado');
-            setAddressData({ street: '', neighborhood: '', city: '', state: '' });
-          }
-        })
-        .catch(err => {
-          console.error('Erro ao buscar CEP:', err);
-          alert('Erro ao buscar CEP');
-        })
-        .finally(() => setLoadingCep(false));
-    } else {
-      setAddressData({ street: '', neighborhood: '', city: '', state: '' });
+    // Se mudar isArmed para false, limpar a descrição
+    if (field === 'isArmed' && value === false) {
+      setFormData(prev => ({ ...prev, armedDescription: '' }));
     }
-  }, [formData.cep]);
-
-  // Montar endereço completo: Rua, Número - Bairro - Cidade/UF
-  const fullAddress = () => {
-    if (!addressData.street) return '';
-    
-    const parts = [];
-    
-    // Rua + Número
-    if (formData.houseNumber) {
-      parts.push(`${addressData.street}, ${formData.houseNumber}`);
-    } else {
-      parts.push(addressData.street);
-    }
-    
-    // Bairro
-    if (addressData.neighborhood) parts.push(addressData.neighborhood);
-    
-    // Cidade/Estado
-    if (addressData.city) parts.push(`${addressData.city}/${addressData.state}`);
-    
-    return parts.join(' - ');
   };
 
   const handleSubmit = () => {
     // Validação
-    if (formData.isAnonymous === null) {
-      alert('Por favor, informe se a solicitação é anônima');
+    if (!formData.whatIsBeingStolen.trim()) {
+      alert(`Por favor, informe ${getLabel().toLowerCase()}`);
       return;
     }
-    if (!formData.whatIsHappening.trim()) {
-      alert('Por favor, informe o que está acontecendo');
+    if (formData.isArmed === null) {
+      alert('Por favor, informe se vê alguém armado');
       return;
     }
-    if (!formData.cep || formData.cep.replace(/\D/g, '').length !== 8) {
-      alert('Por favor, informe um CEP válido');
-      return;
-    }
-    if (!formData.houseNumber.trim()) {
-      alert('Por favor, informe o número da residência');
+    if (formData.isArmed === true && !formData.armedDescription.trim()) {
+      alert('Por favor, descreva a pessoa armada');
       return;
     }
     
-    // Navegar para próxima tela (você me dirá qual é)
-    alert('Formulário validado! Indo para próxima tela...');
-    // navigate('/proxima-tela');
+    // Se passou nas validações, navega para página Otherinformation
+    navigate('/otherinformation');
   };
 
   const handleBack = () => {
-    navigate('/home');
+    navigate('/emergency');
   };
 
   return (
@@ -128,88 +80,68 @@ const EmergencyForm2 = () => {
       <div className="w-full md:w-1/2 flex flex-col p-6 py-12">
         <div className="max-w-md mx-auto w-full space-y-4">
           
-          {/* Pergunta: É anônima? */}
+          {/* O que está sendo furtado/roubado? */}
           <div>
             <label className="block bg-blue-500 text-white text-center py-3 px-4 rounded-full mb-3">
-              A solicitação é anônima?
+              {getLabel()}
+            </label>
+            <input
+              type="text"
+              value={formData.whatIsBeingStolen}
+              onChange={(e) => handleInputChange('whatIsBeingStolen', e.target.value)}
+              className="w-full p-4 border-2 border-gray-300 rounded-full focus:border-blue-500 focus:outline-none"
+            />
+          </div>
+
+          {/* Vê alguém armado? */}
+          <div>
+            <label className="block bg-blue-500 text-white text-center py-3 px-4 rounded-full mb-3">
+              Vê alguém armado?
             </label>
             <div className="flex gap-4">
               <button
-                onClick={() => handleInputChange('isAnonymous', true)}
+                onClick={() => handleInputChange('isArmed', true)}
                 className={`flex-1 py-3 px-4 rounded-full border-2 transition-colors ${
-                  formData.isAnonymous === true
+                  formData.isArmed === true
                     ? 'bg-blue-500 text-white border-blue-500'
                     : 'bg-white text-blue-500 border-blue-500 hover:bg-blue-50'
                 }`}
               >
-                Sim
+                SIM
               </button>
               <button
-                onClick={() => handleInputChange('isAnonymous', false)}
+                onClick={() => handleInputChange('isArmed', false)}
                 className={`flex-1 py-3 px-4 rounded-full border-2 transition-colors ${
-                  formData.isAnonymous === false
+                  formData.isArmed === false
                     ? 'bg-blue-500 text-white border-blue-500'
                     : 'bg-white text-blue-500 border-blue-500 hover:bg-blue-50'
                 }`}
               >
-                Não
+                NÃO
               </button>
             </div>
           </div>
 
-          {/* O que está acontecendo? */}
-          <div>
-            <label className="block bg-blue-500 text-white text-center py-3 px-4 rounded-full mb-3">
-              O que está acontecendo?
-            </label>
-            <input
-              type="text"
-              value={formData.whatIsHappening}
-              onChange={(e) => handleInputChange('whatIsHappening', e.target.value)}
-              className="w-full p-4 border-2 border-gray-300 rounded-full focus:border-blue-500 focus:outline-none"
-            />
-          </div>
-
-          {/* Gesticule o CEP */}
-          <div>
-            <label className="block bg-blue-500 text-white text-center py-3 px-4 rounded-full mb-3">
-              Gesticule o CEP
-            </label>
-            <input
-              type="text"
-              value={formData.cep}
-              onChange={(e) => handleInputChange('cep', e.target.value)}
-              className="w-full p-4 border-2 border-gray-300 rounded-full focus:border-blue-500 focus:outline-none"
-              maxLength="9"
-            />
-            {loadingCep && (
-              <p className="text-sm text-gray-500 mt-2 text-center">Buscando CEP...</p>
-            )}
-          </div>
-
-          {/* Gesticule número */}
-          <div>
-            <label className="block bg-blue-500 text-white text-center py-3 px-4 rounded-full mb-3">
-              Gesticule número
-            </label>
-            <input
-              type="text"
-              value={formData.houseNumber}
-              onChange={(e) => handleInputChange('houseNumber', e.target.value)}
-              className="w-full p-4 border-2 border-gray-300 rounded-full focus:border-blue-500 focus:outline-none"
-            />
-          </div>
-
-          {/* Endereço completo */}
-          {fullAddress() && (
+          {/* Campo "Descreva" - aparece somente se clicar SIM */}
+          {formData.isArmed === true && (
             <div>
               <label className="block bg-blue-500 text-white text-center py-3 px-4 rounded-full mb-3">
-                Endereço completo
+                Descreva
               </label>
-              <div className="w-full p-4 bg-gray-100 border-2 border-gray-300 rounded-3xl text-gray-700">
-                {fullAddress()}
+              <div className="w-full min-h-[400px] p-4 border-2 border-blue-500 rounded-3xl bg-white focus-within:border-blue-600">
+                <textarea
+                  value={formData.armedDescription}
+                  onChange={(e) => handleInputChange('armedDescription', e.target.value)}
+                  className="w-full h-full min-h-[380px] resize-none focus:outline-none"
+                  placeholder="Área de captura de gestos..."
+                />
               </div>
             </div>
+          )}
+
+          {/* Espaçamento grande - aparece somente quando NÃO houver caixa de descrição */}
+          {formData.isArmed !== true && (
+            <div className="h-32"></div>
           )}
 
           {/* Botão AVANÇAR */}

@@ -1,7 +1,7 @@
 /**
  * @file EmergencyForm.jsx
  * @author Renato Wessner dos Santos
- * @date 2025-10-24
+ * @date 2025-10-26
  * @project SOS Libras - Sistema de Emergência em Libras
  * @copyright (c) 2025 Renato Wessner dos Santos
  */
@@ -103,7 +103,12 @@ const EmergencyForm = () => {
       return;
     }
     
-    navigate('/emergency2');
+    // Navega para página 2 PASSANDO o valor de "O que está acontecendo?"
+    navigate('/emergency2', { 
+      state: { 
+        whatIsHappening: formData.whatIsHappening 
+      } 
+    });
   };
 
   const handleBack = () => {

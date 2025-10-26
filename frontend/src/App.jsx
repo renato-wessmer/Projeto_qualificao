@@ -3,7 +3,6 @@
  * @author Renato Wessner dos Santos
  * @date 2025-10-24
  * @project SOS Libras - Sistema de Emergência em Libras
- * @description Componente principal com rotas
  * @copyright (c) 2025 Renato Wessner dos Santos
  */
 
@@ -14,6 +13,7 @@ import InfoScreen from './pages/InfoScreen';
 import DistritosScreen from './pages/DistritosScreen';
 import EmergencyForm from './pages/EmergencyForm';
 import EmergencyForm2 from './pages/EmergencyForm2';
+import Otherinformation from './pages/Otherinformation';
 
 function App() {
   return (
@@ -25,6 +25,7 @@ function App() {
         <Route path="/distritos" element={<DistritosScreen />} />
         <Route path="/emergency" element={<EmergencyForm />} />
         <Route path="/emergency2" element={<EmergencyForm2 />} />
+        <Route path="/otherinformation" element={<Otherinformation />} />
       </Routes>
     </Router>
   );
