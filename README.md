@@ -287,14 +287,18 @@ LocalStorage (Browser)
 
 **Renato Wessner dos Santos**
 
-- 🎓 Mestrando - UNIVESP
+- 🎓 Mestrando - Centro Paula Sousa
 - 🐙 GitHub: [@renato-wessmer](https://github.com/renato-wessmer)
 
 ---
 
 ## 📄 Licença
 
-Este projeto está sob a licença MIT.
+Este projeto está sob licença proprietária. Todos os direitos reservados.
+
+© 2025 Renato Wessner dos Santos 
+
+**Uso Restrito:** Este software foi desenvolvido como parte de um projeto de qualificação de mestrado e não pode ser reproduzido, distribuído ou modificado sem autorização expressa do autor.
 
 ---
 
