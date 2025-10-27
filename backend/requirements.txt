@@ -1,0 +1,22 @@
+# Processamento de Vídeo (versões compatíveis com numpy<2)
+opencv-python==4.11.0.86
+opencv-python-headless==4.11.0.86
+rembg==2.0.67
+Pillow==12.0.0
+
+# MediaPipe
+mediapipe==0.10.21
+
+# Deep Learning 
+tensorflow==2.18.0
+numpy>=1.24.0,<2.0.0
+scikit-learn==1.5.2
+
+# API
+flask==3.0.0
+flask-cors==5.0.0
+python-dotenv==1.0.1
+
+# Utilitários
+tqdm==4.67.1
+pandas==2.2.3
