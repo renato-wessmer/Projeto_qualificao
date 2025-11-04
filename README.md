@@ -36,7 +36,6 @@ Promover a **acessibilidade** e **inclusão** da comunidade surda brasileira no 
 ### 🏫 Contexto Acadêmico
 
 - **Instituição:** UNIVESP (Universidade Virtual do Estado de São Paulo)
-- **Nível:** Mestrado
 - **Autor:** Renato Wessner dos Santos
 - **Tipo:** Projeto de Qualificação
 - **Data:** Outubro de 2025
