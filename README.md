@@ -305,7 +305,6 @@ Este projeto está sob licença proprietária. Todos os direitos reservados.
 
 - Centro Paula Sousa
 - Comunidade Surda Brasileira
-- Orientadores e professores do programa de Mestrado
 
 ---
 
